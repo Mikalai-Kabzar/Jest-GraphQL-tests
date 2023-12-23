@@ -1,0 +1,18 @@
+type Animal {
+  species: String
+  age: Int
+  weight: Float
+  sound: String
+}
+
+type Query {
+  animals: [Animal]
+  animal(species: String!): Animal
+  makeSound(species: String!): String
+}
+
+type Mutation {
+  addAnimal(species: String!, age: Int!, weight: Float!, sound: String!): Animal
+  setAnimal(species: String!, age: Int, weight: Float, sound: String): Animal
+  deleteAnimal(species: String!): Boolean
+}
