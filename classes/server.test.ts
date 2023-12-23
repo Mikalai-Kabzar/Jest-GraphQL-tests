@@ -5,7 +5,7 @@ import GraphQLServer from './GraphQLServer'; // Update the import path based on 
 
   beforeAll(() => {
     graphqlServer = new GraphQLServer();
-    graphqlServer.startServer();
+    graphqlServer.startServer(4000);
   });
 
   afterAll(() => {
@@ -118,7 +118,7 @@ describe('GraphQL Server Integration Tests', () => {
 
     // Update the animal using the mutation
     const setAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
+      .post(graphqlServer.server?.graphqlPath)
       .send({ query: setAnimalMutation })
       .expect(200);
 

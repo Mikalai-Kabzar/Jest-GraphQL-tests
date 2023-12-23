@@ -5,6 +5,7 @@ import Animal from './Animal';
 import AnimalDatabase from './AnimalDatabase';
 import fs from 'fs';
 import path from 'path';
+import { Command, Option } from 'commander';
 
 class GraphQLServer {
     public server: any;
@@ -91,20 +92,49 @@ class GraphQLServer {
         };
       }
   
-    startServer(): void { 
-      //const PORT = 4000;
-      //this.app.listen(PORT);
-    }
-  
-    stopServer() {
-        //this.server.stop();
-    }
+      startServer(port: number): void {
+        this.app.listen(port, () => {
+          console.log(`Server is running at http://localhost:${port}/graphql`);
+        });
+      }
+    
+      stopServer(): void {
+        if (this.server) {
+          this.server.stop();
+          console.log('Server stopped');
+        } else {
+          console.log('Server not running');
+        }
+      }
   
     // Expose the app for testing
     getTestApp(): express.Express {
         return this.app;
     }
+
+
+
+    
   }
   
   export default GraphQLServer;
+  
+  const graphqlServer = new GraphQLServer();
+// Use Command and Option from commander directly
+const program = new Command();
+program
+  .addOption(new Option('-p, --port <port>', 'Port number for the GraphQL server').argParser(parseInt))
+  .option('-s, --stop', 'Stop the GraphQL server')
+  .parse(process.argv);
+
+const options = program.opts();
+
+if (options.stop) {
+  // Stop the server if the --stop option is provided
+  graphqlServer.stopServer();
+} else {
+  // Start the server with the specified port or default to 4000
+  const port = options.port || 4000;
+  graphqlServer.startServer(port);
+}
   
