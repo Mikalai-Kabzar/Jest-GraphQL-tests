@@ -1,5 +1,5 @@
 {
-  "type": "module",
+
   "compilerOptions": {
     "esModuleInterop": true
   },

@@ -3,7 +3,10 @@ module.exports = {
   testEnvironment: 'node',
   //testEnvironment: 'allure-jest/jsdom',
   coverageProvider: 'babel',
-
+  coveragePathIgnorePatterns: [
+    './classes/BaseTest.ts',
+    // Add more patterns as needed
+  ],
   reporters: ['default'],
 
   // reporters: ['default',   

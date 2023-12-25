@@ -6,6 +6,7 @@ type Animal {
 }
 
 type Query {
+  animals1: [Animal] @deprecated(reason: "Use newField instead.")
   animals: [Animal]
   animal(species: String!): Animal
   makeSound(species: String!): String

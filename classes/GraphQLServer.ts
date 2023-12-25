@@ -3,6 +3,7 @@ import express from 'express';
 import { ApolloServer, gql } from 'apollo-server-express';
 import Animal from './Animal';
 import AnimalDatabase from './AnimalDatabase';
+import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { Command, Option } from 'commander';
@@ -26,6 +27,7 @@ class GraphQLServer {
     }
   
     type Query {
+      animals1: [Animal] @deprecated(reason: "Use newField instead.")
       animals: [Animal]
       animal(species: String!): Animal
       makeSound(species: String!): String
@@ -99,8 +101,16 @@ class GraphQLServer {
       }
     
       stopServer(): void {
+
+
         if (this.server) {
           this.server.stop();
+
+          exec('npx kill-port 4000');
+          exec('npx kill-port 4001');
+
+
+
           console.log('Server stopped');
         } else {
           console.log('Server not running');
@@ -111,30 +121,28 @@ class GraphQLServer {
     getTestApp(): express.Express {
         return this.app;
     }
-
-
-
     
   }
   
   export default GraphQLServer;
   
-  const graphqlServer = new GraphQLServer();
-// Use Command and Option from commander directly
-const program = new Command();
-program
-  .addOption(new Option('-p, --port <port>', 'Port number for the GraphQL server').argParser(parseInt))
-  .option('-s, --stop', 'Stop the GraphQL server')
-  .parse(process.argv);
+  
+//   const graphqlServer = new GraphQLServer();
+// // Use Command and Option from commander directly
+// const program = new Command();
+// program
+//   .addOption(new Option('-p, --port <port>', 'Port number for the GraphQL server').argParser(parseInt))
+//   .option('-s, --stop', 'Stop the GraphQL server')
+//   .parse(process.argv);
 
-const options = program.opts();
+// const options = program.opts();
 
-if (options.stop) {
-  // Stop the server if the --stop option is provided
-  graphqlServer.stopServer();
-} else {
-  // Start the server with the specified port or default to 4000
-  const port = options.port || 4000;
-  graphqlServer.startServer(port);
-}
+// if (options.stop) {
+//   // Stop the server if the --stop option is provided
+//   graphqlServer.stopServer();
+// } else {
+//   // Start the server with the specified port or default to 4000
+//   const port = options.port || 4001;
+//   graphqlServer.startServer(port);
+// }
   

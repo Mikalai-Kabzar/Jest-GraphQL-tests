@@ -1,38 +1,29 @@
-import request from 'supertest';
-import GraphQLServer from './GraphQLServer'; // Update the import path based on your project structure
+import BaseTest from './BaseTest';
+const call = BaseTest.prototype.makeGraphqlRequest; // Create an alias
 
-  let graphqlServer: GraphQLServer;
+  const baseTest = new BaseTest();
 
   beforeAll(() => {
-    graphqlServer = new GraphQLServer();
-    graphqlServer.startServer(4000);
+    baseTest.startServer(4000);
   });
 
   afterAll(() => {
-    graphqlServer.stopServer();
+    baseTest.stopServer();
   });
 
 
 describe('GraphQL Server Integration Tests', () => {
 
   it('should return a list of animals', async () => {
-    const response = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: '{ animals { species } }' })
-      .expect(200);
-
+    const query = '{ animals { species } }';
+    const response = await call(query);
     expect(response.body.data.animals).toBeDefined();
     expect(response.body.data.animals).toBeInstanceOf(Array);
   });
 
   it('should add a new animal', async () => {
-    const response = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({
-        query: 'mutation { addAnimal(species: "Tiger", age: 3, weight: 150, sound: "Roar") { species } }',
-      })
-      .expect(200);
-
+    const query = 'mutation { addAnimal(species: "Tiger", age: 3, weight: 150, sound: "Roar") { species } }';
+    const response  = await call(query);
     expect(response.body.data.addAnimal.species).toBe('Tiger');
   });
 
@@ -50,10 +41,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Add an animal using the mutation
-    const addAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: addAnimalMutation })
-      .expect(200);
+    const addAnimalResponse  = await call(addAnimalMutation);
 
     // Ensure that the animal was added successfully
     const addedAnimal = addAnimalResponse.body.data.addAnimal;
@@ -71,10 +59,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Get the animal by species
-    const getAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: getAnimalQuery })
-      .expect(200);
+    const getAnimalResponse  = await call(getAnimalQuery);
 
     // Ensure that the returned animal matches the added animal
     const returnedAnimal = getAnimalResponse.body.data.animal;
@@ -96,10 +81,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Add an animal using the mutation
-    const addAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: addAnimalMutation })
-      .expect(200);
+    const addAnimalResponse  = await call(addAnimalMutation);
 
     // Ensure that the animal was added successfully
     const addedAnimal = addAnimalResponse.body.data.addAnimal;
@@ -117,10 +99,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Update the animal using the mutation
-    const setAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath)
-      .send({ query: setAnimalMutation })
-      .expect(200);
+    const setAnimalResponse  = await call(setAnimalMutation);
 
     // Ensure that the animal was updated successfully
     const updatedAnimal = setAnimalResponse.body.data.setAnimal;
@@ -148,10 +127,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Add an animal using the mutation
-    const addAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: addAnimalMutation })
-      .expect(200);
+    const addAnimalResponse  = await call(addAnimalMutation);
 
     // Ensure that the animal was added successfully
     const addedAnimal = addAnimalResponse.body.data.addAnimal;
@@ -164,10 +140,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Delete the animal using the mutation
-    const deleteAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: deleteAnimalMutation })
-      .expect(200);
+    const deleteAnimalResponse  = await call(deleteAnimalMutation);
 
     // Ensure that the deleteAnimal mutation returns true (success)
     const deleteSuccess = deleteAnimalResponse.body.data.deleteAnimal;
@@ -185,10 +158,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Attempt to get the deleted animal (should be undefined)
-    const getAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: getAnimalQuery })
-      .expect(200);
+    const getAnimalResponse  = await call(getAnimalQuery);
 
     // Ensure that the returned animal is undefined
     const returnedAnimal = getAnimalResponse.body.data.animal;
@@ -203,10 +173,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Try to delete the non-existing animal
-    const deleteAnimalResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: deleteAnimalMutation })
-      .expect(200);
+    const deleteAnimalResponse  = await call(deleteAnimalMutation);
 
     // Ensure that the deleteAnimal mutation returns false for non-existing animal
     const deleteSuccess = deleteAnimalResponse.body.data.deleteAnimal;
@@ -223,10 +190,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Add an animal using the mutation
-    await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: addAnimalMutation })
-      .expect(200);
+    await call(addAnimalMutation);
 
     // Now, test the makeSound query
     const makeSoundQuery = `
@@ -236,10 +200,7 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Get the sound of the added animal using the makeSound query
-    const soundResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: makeSoundQuery })
-      .expect(200);
+    const soundResponse  = await call(makeSoundQuery);
 
     // Ensure that the returned sound matches the expected value
     const returnedSound = soundResponse.body.data.makeSound;
@@ -255,13 +216,12 @@ describe('GraphQL Server Integration Tests', () => {
     `;
 
     // Try to make a sound for the non-existing animal
-    const makeSoundResponse = await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query: makeSoundQuery })
-      .expect(200);
+    const makeSoundResponse  = await call(makeSoundQuery);
 
     // Ensure that the makeSound query returns null for non-existing animal
     const returnedSound = makeSoundResponse.body.data.makeSound;
     expect(returnedSound).toBeNull();
   });
 });
+
+
