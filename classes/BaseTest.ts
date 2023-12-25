@@ -24,10 +24,18 @@ class BaseTest {
     graphqlServer.stopServer();
   }
 
-  async makeGraphqlRequest(query: string): Promise<Test> {
+  // async makeGraphqlRequest(query: string): Promise<Test> {
+  //   return await request(graphqlServer.getTestApp())
+  //     .post(graphqlServer.server?.graphqlPath || '')
+  //     .send({ query : query})
+  //     .expect(200);
+  // }
+
+  async makeGraphqlRequest(query: string, variables?: Record<string, any>): Promise<Test> {
+    const requestBody = variables ? { query, variables } : { query };
     return await request(graphqlServer.getTestApp())
       .post(graphqlServer.server?.graphqlPath || '')
-      .send({ query : query})
+      .send(requestBody)
       .expect(200);
   }
 }
