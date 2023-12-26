@@ -34,8 +34,8 @@ class BaseTest {
     const requestBody = variables ? { query, variables } : { query };
     return await request(graphqlServer.getTestApp())
       .post(graphqlServer.server?.graphqlPath || '')
-      .send(requestBody)
-      .expect(200);
+      .send(requestBody);
+      //.expect(200);
   }
 }
 

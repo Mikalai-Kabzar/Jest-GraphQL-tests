@@ -2,27 +2,27 @@
 import Animal from './Animal';
 
 export default class AnimalDatabase {
-    private animals: Animal[] = [
-        new Animal("Lion", 5, 200, "Roar"),
-        new Animal("Elephant", 10, 5000, "Trumpet"),
-        new Animal("Tiger", 3, 150, "Roar"),
-        new Animal("Giraffe", 8, 1200, "Hum"),
-        new Animal("Penguin", 2, 20, "Squawk"),
-        new Animal("Kangaroo", 6, 80, "Thump"),
-        new Animal("Cheetah", 4, 150, "Growl"),
-        new Animal("Hippopotamus", 7, 2500, "Grunt"),
-        new Animal("Parrot", 1, 0.5, "Squawk"),
-        new Animal("Gorilla", 9, 400, "Grunt"),
-        new Animal("Zebra", 5, 300, "Neigh"),
-        new Animal("Crocodile", 12, 500, "Roar"),
-        new Animal("Peacock", 4, 5, "Scream"),
-        new Animal("Snake", 2, 3, "Hiss"),
-        new Animal("Ostrich", 5, 150, "Boom"),
-        new Animal("Dolphin", 8, 300, "Click"),
-        new Animal("Chimpanzee", 6, 70, "Chatter"),
-        new Animal("Panda", 4, 200, "Growl"),
-        new Animal("Koala", 3, 10, "Grunt"),
-        new Animal("Flamingo", 2, 8, "Honk"),
+    private animals: any[] = [
+      new Animal("Lion", 5, 200, "Roar", true, "Meat", false, ""),
+      new Animal("Elephant", 10, 5000, "Trumpet", false, "", true, "Vegetables"),
+      new Animal("Tiger", 3, 150, "Roar", true, "Meat", false, ""),
+      new Animal("Penguin", 2, 20, "Squawk", true, "Fish", false, ""),
+      new Animal("Kangaroo", 6, 80, "Thump", false, "", true, "Grass"),
+      new Animal("Cheetah", 4, 150, "Growl", true, "Meat", false, ""),
+      new Animal("Hippopotamus", 7, 2500, "Grunt", false, "", true, "Grass"),
+      new Animal("Parrot", 1, 0.5, "Squawk", false, "", true, "Seeds"),
+      new Animal("Gorilla", 9, 400, "Grunt", false, "", true, "Fruits"),
+      new Animal("Zebra", 5, 300, "Neigh", false, "", true, "Grass"),
+      new Animal("Crocodile", 12, 500, "Roar", true, "Meat", false, ""),
+      new Animal("Peacock", 4, 5, "Scream", true, "Insects", false, ""),
+      new Animal("Snake", 2, 3, "Hiss", true, "Rodents", false, ""),
+      new Animal("Ostrich", 5, 150, "Boom", true, "Insects", false, ""),
+      new Animal("Dolphin", 8, 300, "Click", true, "Fish", false, ""),
+      new Animal("Chimpanzee", 6, 70, "Chatter", false, "", true, "Fruits"),
+      new Animal("Panda", 4, 200, "Growl", false, "", true, "Bamboo"),
+      new Animal("Koala", 3, 10, "Grunt", false, "", true, "Eucalyptus leaves"),
+      new Animal("Flamingo", 2, 8, "Honk", true, "Fish", false, ""),
+
       ];
 
   getAnimals(): Animal[] {

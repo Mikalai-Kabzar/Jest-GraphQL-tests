@@ -1,19 +1,53 @@
-type Animal {
+interface Carnivorous {
+  hasSharpTeeth: Boolean
+  huntingMethod: String
+}
+
+interface Herbivorous {
+  eatsPlants: Boolean
+  favoritePlant: String
+}
+
+type Animal implements Carnivorous & Herbivorous {
   species: String
   age: Int
   weight: Float
   sound: String
+  hasSharpTeeth: Boolean
+  huntingMethod: String
+  eatsPlants: Boolean
+  favoritePlant: String
 }
 
 type Query {
-  animals1: [Animal] @deprecated(reason: "Use newField instead.")
+  animalsDeprecated: [Animal] @deprecated(reason: "Use animals instead.")
   animals: [Animal]
   animal(species: String!): Animal
   makeSound(species: String!): String
 }
 
 type Mutation {
-  addAnimal(species: String!, age: Int!, weight: Float!, sound: String!): Animal
-  setAnimal(species: String!, age: Int, weight: Float, sound: String): Animal
+  addAnimal(
+    species: String!,
+    age: Int!,
+    weight: Float!,
+    sound: String!,
+    hasSharpTeeth: Boolean!,
+    huntingMethod: String!,
+    eatsPlants: Boolean!,
+    favoritePlant: String!
+  ): Animal
+
+  setAnimal(
+    species: String!,
+    age: Int,
+    weight: Float,
+    sound: String,
+    hasSharpTeeth: Boolean,
+    huntingMethod: String,
+    eatsPlants: Boolean,
+    favoritePlant: String
+  ): Animal
+
   deleteAnimal(species: String!): Boolean
 }

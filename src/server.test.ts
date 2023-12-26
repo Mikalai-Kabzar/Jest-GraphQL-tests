@@ -16,13 +16,49 @@ describe('GraphQL Server Integration Tests', () => {
   it('should return a list of animals', async () => {
     const query = '{ animals { species } }';
     const response = await call(query);
+  
+    expect(response.status).toBe(200);
     expect(response.body.data.animals).toBeDefined();
     expect(response.body.data.animals).toBeInstanceOf(Array);
+  
+    // Add specific assertions for the animals
+    const animals = response.body.data.animals;
+    animals.forEach((animal: any) => {
+      expect(animal.species).toBeDefined();
+    });
   });
 
-  it('should add a new animal', async () => {
-    const query = 'mutation { addAnimal(species: "Tiger", age: 3, weight: 150, sound: "Roar") { species } }';
+  it('should add a new animal with usage of inline fragments', async () => {
+    const query = `
+    mutation {
+      addAnimal(
+        species: "Tiger",
+        age: 3,
+        weight: 150,
+        sound: "Roar",
+        hasSharpTeeth: true,
+        huntingMethod: "Stalk",
+        eatsPlants: false,
+        favoritePlant: ""
+      ) {
+        species
+        age
+        weight
+        sound
+        ... on Carnivorous {
+          hasSharpTeeth
+          huntingMethod
+        }
+        ... on Herbivorous {
+          eatsPlants
+          favoritePlant
+        }
+      }
+    }
+    
+  `;
     const response  = await call(query);
+    console.log(response.body);
     expect(response.body.data.addAnimal.species).toBe('Tiger');
   });
 
@@ -489,9 +525,64 @@ describe('GraphQL Server Integration Tests', () => {
     });
   });
 
+  it('should retrieve information about an animal using default variable value', async () => {
+    const query = `
+      query GetAnimals($species: String = "Tiger") {
+        animal(species: $species) {
+          species
+          age
+          weight
+          sound
+        }
+      }
+    `;
+  
+    const response = await call(query);
+  
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('data.animal.species', 'Tiger');
+  });
 
+  it('should retrieve information about a specific animal', async () => {
+    const query = `
+      query GetAnimals($species: String = "Elephant") {
+        animal(species: $species) {
+          species
+          age
+          weight
+          sound
+        }
+      }
+    `;
+  
+    const variables = {
+      species: 'Tiger',
+    };
+  
+    const response = await call(query, variables);
+  
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('data.animal.species', 'Tiger');
+  });
 
-
+  it('should retrieve information about a specific animal', async () => {
+    const query = `
+      query {
+        animals {
+          __typename
+          species
+          age
+          weight
+          sound
+        }
+      }
+    `;
+  
+    const response = await call(query);
+  
+    //expect(response.status).toBe(200);
+    expect(response.body).toBe('data.animal.species');
+  });
 
 
 });

@@ -4,6 +4,8 @@ import { ApolloServer, gql } from 'apollo-server-express';
 import Animal from './Animal';
 import AnimalDatabase from './AnimalDatabase';
 import { exec } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 export class GraphQLServer {
     public server: any;
@@ -40,9 +42,9 @@ export class GraphQLServer {
 
     private async initializeApolloServer(): Promise<void> {
       // Read the GraphQL schema from the file
-      //const schema = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8');
-      //const typeDefs = gql`${schema}`;
-      const typeDefs = gql`${this.schema}`;
+      const schema = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8');
+      const typeDefs = gql`${schema}`;
+      //const typeDefs = gql`${this.schema}`;
       const resolvers = this.createResolvers();
   
       this.server = new ApolloServer({ typeDefs, resolvers });
@@ -54,44 +56,70 @@ export class GraphQLServer {
   
 
     private createResolvers(): any {
+
         const animalDatabase = new AnimalDatabase();
     
+
+
         return {
           Query: {
             animals: () => animalDatabase.getAnimals(),
             animal: (parent: any, args: any) => animalDatabase.getAnimalBySpecies(args.species),
             makeSound: (parent: any, args: any) => {
-                const animal = animalDatabase.getAnimalBySpecies(args.species);
-                return animal ? animal.makeSound() : null;
-              },
+              const animal = animalDatabase.getAnimalBySpecies(args.species);
+              return animal ? animal.makeSound() : null;
+            },
           },
           Mutation: {
             addAnimal: (parent: any, args: any) => {
-              const newAnimal = new Animal(args.species, args.age, args.weight, args.sound);
+              const newAnimal = new Animal(
+                args.species,
+                args.age,
+                args.weight,
+                args.sound,
+                args.hasSharpTeeth || false,
+                args.huntingMethod || "",
+                args.eatsPlants || false,
+                args.favoritePlant || ""
+              );
               animalDatabase.addAnimal(newAnimal);
               return newAnimal;
             },
             setAnimal: (parent: any, args: any) => {
-              const updatedAnimal = new Animal(args.species, args.age, args.weight, args.sound);
+              const updatedAnimal = new Animal(
+                args.species,
+                args.age,
+                args.weight,
+                args.sound,
+                args.hasSharpTeeth || false,
+                args.huntingMethod || "",
+                args.eatsPlants || false,
+                args.favoritePlant || ""
+              );
               animalDatabase.setAnimalBySpecies(args.species, updatedAnimal);
               return updatedAnimal;
             },
             deleteAnimal: (parent: any, args: any) => {
               const speciesToDelete = args.species;
               const animalToDelete = animalDatabase.getAnimalBySpecies(speciesToDelete);
-    
+        
               if (animalToDelete) {
                 animalDatabase.deleteAnimalBySpecies(speciesToDelete);
                 return true;
               }
-    
+        
               return false;
             },
           },
+
+
+
+
         };
       }
   
       startServer(port: number): void {
+        exec('npx kill-port 4000');
         this.app.listen(port, () => {
           console.log(`Server is running at http://localhost:${port}/graphql`);
         });
@@ -100,7 +128,7 @@ export class GraphQLServer {
       stopServer(): void {
           this.server.stop();
           exec('npx kill-port 4000');
-          //exec('npx kill-port 4001');
+          exec('npx kill-port 4001');
       }
   
     // Expose the app for testing
@@ -112,6 +140,6 @@ export class GraphQLServer {
   
 export default GraphQLServer;
 
-const graphqlServer = new GraphQLServer();
-graphqlServer.startServer(4001);   
+//const graphqlServer = new GraphQLServer();
+//graphqlServer.startServer(4000);   
   
