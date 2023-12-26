@@ -1,5 +1,5 @@
 {
-
+  "type": "commonjs",
   "compilerOptions": {
     "esModuleInterop": true
   },
@@ -11,13 +11,15 @@
     "supertest": "^6.3.3"
   },
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "start": "npx tsx .\\src\\GraphQLServer.ts"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/supertest": "^6.0.1",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

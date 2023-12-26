@@ -4,11 +4,8 @@ import { ApolloServer, gql } from 'apollo-server-express';
 import Animal from './Animal';
 import AnimalDatabase from './AnimalDatabase';
 import { exec } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import { Command, Option } from 'commander';
 
-class GraphQLServer {
+export class GraphQLServer {
     public server: any;
     private app: express.Express;
   
@@ -101,20 +98,9 @@ class GraphQLServer {
       }
     
       stopServer(): void {
-
-
-        if (this.server) {
           this.server.stop();
-
           exec('npx kill-port 4000');
-          exec('npx kill-port 4001');
-
-
-
-          console.log('Server stopped');
-        } else {
-          console.log('Server not running');
-        }
+          //exec('npx kill-port 4001');
       }
   
     // Expose the app for testing
@@ -122,27 +108,10 @@ class GraphQLServer {
         return this.app;
     }
     
-  }
+}
   
-  export default GraphQLServer;
-  
-  
-//   const graphqlServer = new GraphQLServer();
-// // Use Command and Option from commander directly
-// const program = new Command();
-// program
-//   .addOption(new Option('-p, --port <port>', 'Port number for the GraphQL server').argParser(parseInt))
-//   .option('-s, --stop', 'Stop the GraphQL server')
-//   .parse(process.argv);
+export default GraphQLServer;
 
-// const options = program.opts();
-
-// if (options.stop) {
-//   // Stop the server if the --stop option is provided
-//   graphqlServer.stopServer();
-// } else {
-//   // Start the server with the specified port or default to 4000
-//   const port = options.port || 4001;
-//   graphqlServer.startServer(port);
-// }
+const graphqlServer = new GraphQLServer();
+graphqlServer.startServer(4001);   
   

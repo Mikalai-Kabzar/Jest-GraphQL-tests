@@ -4,11 +4,13 @@ module.exports = {
   //testEnvironment: 'allure-jest/jsdom',
   coverageProvider: 'babel',
   coveragePathIgnorePatterns: [
-    './classes/BaseTest.ts',
+    './src/BaseTest.ts',
     // Add more patterns as needed
   ],
   reporters: ['default'],
-
+  "testMatch": [
+    "<rootDir>/src/*.test.ts"
+  ],
   // reporters: ['default',   
   // ["jest-html-reporters", {
   //   "publicPath": "./html-report",

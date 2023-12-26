@@ -1,7 +1,6 @@
 import request, { Test} from 'supertest';
 import { Express } from 'express';
-import GraphQLServer from './GraphQLServer';
-
+import {GraphQLServer} from './GraphQLServer';
 
 let graphqlServer: GraphQLServer;
 
