@@ -6,6 +6,13 @@ import AnimalDatabase from './AnimalDatabase';
 import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { Carnivorous } from './Carnivorous';
+import { Herbivorous } from './Herbivorous';
+import { Insect } from './Insect';
+// Define interfaces and types based on the schema
+interface AnimalResolver extends Animal {}
+interface CarnivorousResolver extends AnimalResolver, Carnivorous {}
+interface HerbivorousResolver extends AnimalResolver, Herbivorous {}
 
 export class GraphQLServer {
     public server: any;
@@ -63,7 +70,24 @@ export class GraphQLServer {
 
         return {
           Query: {
-            animals: () => animalDatabase.getAnimals(),
+            __resolveType(animal: any) {
+              if (animal instanceof Herbivorous) {
+                return 'Herbivorous';
+              } else if (animal instanceof Carnivorous) {
+                return 'Carnivorous';
+              } else if (animal instanceof Insect) {
+                return 'Insect';
+              }
+              return 'Animal';
+            },
+
+            animals: () => {
+              
+              console.log(animalDatabase.getAnimals())
+              
+              
+              
+              return animalDatabase.getAnimals()},
             animal: (parent: any, args: any) => animalDatabase.getAnimalBySpecies(args.species),
             makeSound: (parent: any, args: any) => {
               const animal = animalDatabase.getAnimalBySpecies(args.species);
@@ -72,48 +96,58 @@ export class GraphQLServer {
           },
           Mutation: {
             addAnimal: (parent: any, args: any) => {
-              const newAnimal = new Animal(
-                args.species,
-                args.age,
-                args.weight,
-                args.sound,
-                args.hasSharpTeeth || false,
-                args.huntingMethod || "",
-                args.eatsPlants || false,
-                args.favoritePlant || ""
-              );
+              let newAnimal;
+        
+              if (args.favoritePlant !== undefined) {
+                const { species, age, weight, sound, favoritePlant } = args;
+                newAnimal = new Herbivorous(species, age, weight, sound, favoritePlant);
+              } else if (args.huntingMethod !== undefined) {
+                const { species, age, weight, sound, huntingMethod } = args;
+                newAnimal = new Carnivorous(species, age, weight, sound, huntingMethod);
+              } else if (args.eatsInsects !== undefined) {
+                const { species, age, weight, sound, eatsInsects, favoriteInsect } = args;
+                newAnimal = new Insect(species, age, weight, sound, eatsInsects, favoriteInsect);
+              } else {
+                // Handle the default case or throw an error
+                throw new Error('Invalid animal type');
+              }
+        
               animalDatabase.addAnimal(newAnimal);
               return newAnimal;
-            },
-            setAnimal: (parent: any, args: any) => {
-              const updatedAnimal = new Animal(
-                args.species,
-                args.age,
-                args.weight,
-                args.sound,
-                args.hasSharpTeeth || false,
-                args.huntingMethod || "",
-                args.eatsPlants || false,
-                args.favoritePlant || ""
-              );
-              animalDatabase.setAnimalBySpecies(args.species, updatedAnimal);
-              return updatedAnimal;
             },
             deleteAnimal: (parent: any, args: any) => {
               const speciesToDelete = args.species;
               const animalToDelete = animalDatabase.getAnimalBySpecies(speciesToDelete);
-        
+    
               if (animalToDelete) {
                 animalDatabase.deleteAnimalBySpecies(speciesToDelete);
                 return true;
               }
-        
+    
               return false;
             },
           },
-
-
-
+          Animal: {
+            __resolveType(animal: any) {
+              if (animal instanceof Herbivorous) {
+                return 'Herbivorous';
+              } else if (animal instanceof Carnivorous) {
+                return 'Carnivorous';
+              } else if (animal instanceof Insect) {
+                return 'Insect';
+              }
+              return 'Animal';
+            },
+          },
+          Herbivorous: {
+            // Add specific resolvers for Herbivorous if needed
+          },
+          Carnivorous: {
+            // Add specific resolvers for Carnivorous if needed
+          },
+          Insect: {
+            // Add specific resolvers for Insect if needed
+          },
 
         };
       }

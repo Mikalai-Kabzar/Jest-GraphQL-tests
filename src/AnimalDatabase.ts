@@ -1,36 +1,59 @@
 // AnimalDatabase.ts
 import Animal from './Animal';
+import { Carnivorous } from './Carnivorous';
+import { Herbivorous } from './Herbivorous';
+import { Insect } from './Insect';
 
 export default class AnimalDatabase {
-    private animals: any[] = [
-      new Animal("Lion", 5, 200, "Roar", true, "Meat", false, ""),
-      new Animal("Elephant", 10, 5000, "Trumpet", false, "", true, "Vegetables"),
-      new Animal("Tiger", 3, 150, "Roar", true, "Meat", false, ""),
-      new Animal("Penguin", 2, 20, "Squawk", true, "Fish", false, ""),
-      new Animal("Kangaroo", 6, 80, "Thump", false, "", true, "Grass"),
-      new Animal("Cheetah", 4, 150, "Growl", true, "Meat", false, ""),
-      new Animal("Hippopotamus", 7, 2500, "Grunt", false, "", true, "Grass"),
-      new Animal("Parrot", 1, 0.5, "Squawk", false, "", true, "Seeds"),
-      new Animal("Gorilla", 9, 400, "Grunt", false, "", true, "Fruits"),
-      new Animal("Zebra", 5, 300, "Neigh", false, "", true, "Grass"),
-      new Animal("Crocodile", 12, 500, "Roar", true, "Meat", false, ""),
-      new Animal("Peacock", 4, 5, "Scream", true, "Insects", false, ""),
-      new Animal("Snake", 2, 3, "Hiss", true, "Rodents", false, ""),
-      new Animal("Ostrich", 5, 150, "Boom", true, "Insects", false, ""),
-      new Animal("Dolphin", 8, 300, "Click", true, "Fish", false, ""),
-      new Animal("Chimpanzee", 6, 70, "Chatter", false, "", true, "Fruits"),
-      new Animal("Panda", 4, 200, "Growl", false, "", true, "Bamboo"),
-      new Animal("Koala", 3, 10, "Grunt", false, "", true, "Eucalyptus leaves"),
-      new Animal("Flamingo", 2, 8, "Honk", true, "Fish", false, ""),
+    private animals: Animal[] = [
+      
 
+
+      new Animal("Lion1", 5, 200, "Roar"),
+      new Carnivorous("Lion", 5, 200, "Roar", "Meat"),
+      // new Herbivorous("Elephant", 10, 5000, "Trumpet", "Vegetables"),
+      // new Carnivorous("Tiger", 3, 150, "Roar", "Meat"),
+      // new Carnivorous("Penguin", 2, 20, "Squawk", "Fish"),
+      // new Herbivorous("Kangaroo", 6, 80, "Thump", "Grass"),
+      // new Carnivorous("Cheetah", 4, 150, "Growl", "Meat"),
+      // new Herbivorous("Hippopotamus", 7, 2500, "Grunt", "Grass"),
+      // new Herbivorous("Parrot", 1, 0.5, "Squawk", "Seeds"),
+      // new Herbivorous("Gorilla", 9, 400, "Grunt", "Fruits"),
+      // new Herbivorous("Zebra", 5, 300, "Neigh", "Grass"),
+      // new Carnivorous("Crocodile", 12, 500, "Roar", "Meat"),
+      // new Carnivorous("Peacock", 4, 5, "Scream", "Insects"),
+      // new Carnivorous("Snake", 2, 3, "Hiss", "Rodents"),
+      // new Carnivorous("Ostrich", 5, 150, "Boom", "Insects"),
+      // new Carnivorous("Dolphin", 8, 300, "Click", "Fish"),
+      // new Herbivorous("Chimpanzee", 6, 70, "Chatter", "Fruits"),
+      // new Herbivorous("Panda", 4, 200, "Growl", "Bamboo"),
+      // new Herbivorous("Koala", 3, 10, "Grunt", "Eucalyptus leaves"),
+      // new Carnivorous("Flamingo", 2, 8, "Honk", "Fish"),
+      // new Insect("Butterfly", 1, 0.01, "Flutter", false, ""),
+      // new Insect("Ant", 0.5, 0.001, "March", true, "Aphids"),
+      // new Insect("Dragonfly", 2, 0.02, "Buzz", true, "Mosquitoes"),
+      // new Insect("Bee", 0.5, 0.005, "Buzz", true, "Nectar"),
+      // new Insect("Grasshopper", 0.3, 0.002, "Chirp", true, "Grass")
       ];
+
+    // static __resolveType(animal: Animal): string {
+    //   if (animal instanceof Carnivorous) {
+    //     return 'Carnivorous';
+    //   } else if (animal instanceof Herbivorous) {
+    //     return 'Herbivorous';
+    //   } else if (animal instanceof Insect) {
+    //     return 'Insect';
+    //   } else {
+    //     return 'Animal';
+    //   }
+    // }
 
   getAnimals(): Animal[] {
     return this.animals;
   }
-
-  getAnimalBySpecies(species: string): Animal | undefined {
-    return this.animals.find((animal) => animal.species === species);
+  getAnimalBySpecies(species: string): Animal | null {
+    const animal = this.animals.find((a) => a.species === species);
+    return animal || null;
   }
 
   addAnimal(animal: Animal): void {
