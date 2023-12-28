@@ -2,17 +2,17 @@
 import Animal from "./Animal";
 
 export class Carnivorous extends Animal {
-    huntingMethod: string;
+  favoriteFood: string;
   
     constructor(
       species: string,
       age: number,
       weight: number,
       sound: string,
-      huntingMethod: string,
+      favoriteFood: string,
     ) {
       super(species, age, weight, sound);
-      this.huntingMethod = huntingMethod;
+      this.favoriteFood = favoriteFood;
     }
 
     static __resolveType(animal: Carnivorous): string {

@@ -13,11 +13,11 @@ const call = BaseTest.prototype.makeGraphqlRequest; // Create an alias
 
 describe('GraphQL Server Integration Tests', () => {
 
-  it.only('should return a list of animals', async () => {
-    const query = '{ animals { species } }';
-    const getAnimalQuery = `
+  it('should return a list of animals', async () => {
+    let query = `
     query {
-      animal(species: "Lion1") {
+      animals {
+        __typename
         species
         age
         weight
@@ -25,51 +25,71 @@ describe('GraphQL Server Integration Tests', () => {
       }
     }
   `;
-    let response = await call(query);
-    response = await call(getAnimalQuery);
 
-    console.log(response.body);
+    let response = await call(query);
 
     expect(response.status).toBe(200);
-    //expect(response.body.data.animals).toBeDefined();
-    //expect(response.body.data.animals).toBeInstanceOf(Array);
-  
-    // Add specific assertions for the animals
+
     const animals = response.body.data.animals;
+    
+    expect(animals[0].__typename).toBe('Carnivorous')
+    expect(animals[0].species).toBe('Lion')
+    expect(animals[0].age).toBe(5)
+    expect(animals[0].weight).toBe(200)
+    expect(animals[0].sound).toBe('Roar')
+
+    expect(animals[1].__typename).toBe('Herbivorous')
+    expect(animals[1].species).toBe('Elephant')
+    expect(animals[1].age).toBe(10)
+    expect(animals[1].weight).toBe(5000)
+    expect(animals[1].sound).toBe('Trumpet')
+
+    expect(animals[2].__typename).toBe('Insect')
+    expect(animals[2].species).toBe('Grasshopper')
+    expect(animals[2].age).toBe(0.3)
+    expect(animals[2].weight).toBe(0.002)
+    expect(animals[2].sound).toBe('Chirp')
   });
 
-  it('should add a new animal with usage of inline fragments', async () => {
+  it.only('should add a new animal with usage of inline fragments', async () => {
     const query = `
-    mutation {
-      addAnimal(
-        species: "Tiger",
-        age: 3,
-        weight: 150,
-        sound: "Roar",
-        hasSharpTeeth: true,
-        huntingMethod: "Stalk",
-        eatsPlants: false,
-        favoritePlant: ""
-      ) {
-        species
-        age
-        weight
-        sound
-        ... on Carnivorous {
-          hasSharpTeeth
-          huntingMethod
-        }
-        ... on Herbivorous {
-          eatsPlants
-          favoritePlant
+      mutation {
+        addAnimal(
+          species: "Tiger",
+          age: 13,
+          weight: 250,
+          sound: "Roar",
+          favoriteFood: "Meat"
+        ) {
+          species
+          age
+          weight
+          sound
+          ... on Carnivorous {
+            favoriteFood
+          }
         }
       }
-    }
-    
-  `;
-    const response  = await call(query);
+    `;
+    const response = await call(query);
+
     console.log(response.body);
-    expect(response.body.data.addAnimal.species).toBe('Tiger');
+    const addedAnimal = response.body.data.addAnimal;
+
+    expect(addedAnimal.species).toBe('Tiger');
+    // Check other fields based on the type of animal (Carnivorous, Herbivorous, Insect)
+    if ('favoriteFood' in addedAnimal) {
+      // It's a Carnivorous animal
+      expect(addedAnimal.favoriteFood).toBe('');
+    } else if ('eatsPlants' in addedAnimal) {
+      // It's a Herbivorous animal
+      expect(addedAnimal.eatsPlants).toBe(false);
+      expect(addedAnimal.favoritePlant).toBe('');
+    } else if ('eatsInsects' in addedAnimal) {
+      // It's an Insect
+      expect(addedAnimal.eatsInsects).toBe(false);
+      expect(addedAnimal.favoriteFood).toBe('');
+    }
   });
 
   it('getAnimalBySpecies should return the correct animal', async () => {

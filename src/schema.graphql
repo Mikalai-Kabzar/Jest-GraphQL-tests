@@ -1,19 +1,31 @@
 interface Animal {
   species: String
-  age: Int
+  age: Float
   weight: Float
   sound: String
 }
 
-interface Carnivorous {
-  huntingMethod: String
+type Carnivorous implements Animal{
+  species: String
+  age: Float
+  weight: Float
+  sound: String
+  favoriteFood: String
 }
 
-interface Herbivorous {
+type Herbivorous implements Animal{
+  species: String
+  age: Float
+  weight: Float
+  sound: String
   favoritePlant: String
 }
 
-interface Insect {
+type Insect implements Animal{
+  species: String
+  age: Float
+  weight: Float
+  sound: String
   eatsInsects: Boolean
   favoriteFood: String
 }
@@ -23,35 +35,10 @@ input HerbivorousInput {
 }
 
 input CarnivorousInput {
-  huntingMethod: String
-}
-
-input InsectInput {
-  eatsInsects: Boolean
   favoriteFood: String
 }
 
-type CarnivorousAnimal implements Animal & Carnivorous {
-  species: String
-  age: Int
-  weight: Float
-  sound: String
-  huntingMethod: String
-}
-
-type HerbivorousAnimal implements Animal & Herbivorous {
-  species: String
-  age: Int
-  weight: Float
-  sound: String
-  favoritePlant: String
-}
-
-type InsectAnimal implements Animal & Insect {
-  species: String
-  age: Int
-  weight: Float
-  sound: String
+input InsectInput {
   eatsInsects: Boolean
   favoriteFood: String
 }
@@ -66,17 +53,17 @@ type Query {
 type Mutation {
   addAnimal(
     species: String!,
-    age: Int!,
+    age: Float!,
     weight: Float!,
     sound: String!,
     herbivorous: HerbivorousInput,
-    carnivorous: CarnivorousInput,
+    favoriteFood: String,
     insect: InsectInput
   ): Animal
 
   setAnimal(
     species: String!,
-    age: Int,
+    age: Float,
     weight: Float,
     sound: String,
     herbivorous: HerbivorousInput,

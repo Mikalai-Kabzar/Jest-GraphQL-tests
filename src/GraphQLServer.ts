@@ -11,8 +11,7 @@ import { Herbivorous } from './Herbivorous';
 import { Insect } from './Insect';
 // Define interfaces and types based on the schema
 interface AnimalResolver extends Animal {}
-interface CarnivorousResolver extends AnimalResolver, Carnivorous {}
-interface HerbivorousResolver extends AnimalResolver, Herbivorous {}
+
 
 export class GraphQLServer {
     public server: any;
@@ -82,13 +81,19 @@ export class GraphQLServer {
             },
 
             animals: () => {
-              
-              console.log(animalDatabase.getAnimals())
+              // console.log('-------------animals------------')
+              // console.log(animalDatabase.getAnimals())
+              // console.log('-----------------animals------------')
               
               
               
               return animalDatabase.getAnimals()},
-            animal: (parent: any, args: any) => animalDatabase.getAnimalBySpecies(args.species),
+            animal: (parent: any, args: any) => {
+              // console.log('-------------animals------------')
+              // console.log(animalDatabase.getAnimalBySpecies(args.species))
+              // console.log('-----------------animals------------')
+              
+              return animalDatabase.getAnimalBySpecies(args.species)},
             makeSound: (parent: any, args: any) => {
               const animal = animalDatabase.getAnimalBySpecies(args.species);
               return animal ? animal.makeSound() : null;
@@ -102,8 +107,8 @@ export class GraphQLServer {
                 const { species, age, weight, sound, favoritePlant } = args;
                 newAnimal = new Herbivorous(species, age, weight, sound, favoritePlant);
               } else if (args.huntingMethod !== undefined) {
-                const { species, age, weight, sound, huntingMethod } = args;
-                newAnimal = new Carnivorous(species, age, weight, sound, huntingMethod);
+                const { species, age, weight, sound, favoriteFood } = args;
+                newAnimal = new Carnivorous(species, age, weight, sound, favoriteFood);
               } else if (args.eatsInsects !== undefined) {
                 const { species, age, weight, sound, eatsInsects, favoriteInsect } = args;
                 newAnimal = new Insect(species, age, weight, sound, eatsInsects, favoriteInsect);
@@ -153,7 +158,7 @@ export class GraphQLServer {
       }
   
       startServer(port: number): void {
-        exec('npx kill-port 4000');
+        //exec('npx kill-port 4000');
         this.app.listen(port, () => {
           console.log(`Server is running at http://localhost:${port}/graphql`);
         });
