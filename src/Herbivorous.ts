@@ -14,8 +14,4 @@ export class Herbivorous extends Animal {
     super(species, age, weight, sound);
     this.favoritePlant = favoritePlant;
   }
-
-  // static __resolveType(animal: Herbivorous): string {
-  //   return 'Herbivorous';
-  // }
 }  

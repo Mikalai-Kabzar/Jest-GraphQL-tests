@@ -32,18 +32,6 @@ export default class AnimalDatabase {
       new Insect("Bee", 0.5, 0.005, "Buzz", true, "Nectar"),
       ];
 
-    // static __resolveType(animal: Animal): string {
-    //   if (animal instanceof Carnivorous) {
-    //     return 'Carnivorous';
-    //   } else if (animal instanceof Herbivorous) {
-    //     return 'Herbivorous';
-    //   } else if (animal instanceof Insect) {
-    //     return 'Insect';
-    //   } else {
-    //     return 'Animal';
-    //   }
-    // }
-
   getAnimals(): Animal[] {
     return this.animals;
   }
@@ -56,7 +44,6 @@ export default class AnimalDatabase {
     this.animals.push(animal);
   }
 
-  // New setter methods
   setAnimalBySpecies(species: string, updatedAnimal: Animal): void {
     const index = this.animals.findIndex((animal) => animal.species === species);
 

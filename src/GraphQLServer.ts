@@ -1,7 +1,6 @@
 // GraphQLServer.ts
 import express from 'express';
 import { ApolloServer, gql } from 'apollo-server-express';
-import Animal from './Animal';
 import AnimalDatabase from './AnimalDatabase';
 import { exec } from 'child_process';
 import fs from 'fs';
@@ -9,9 +8,6 @@ import path from 'path';
 import { Carnivorous } from './Carnivorous';
 import { Herbivorous } from './Herbivorous';
 import { Insect } from './Insect';
-// Define interfaces and types based on the schema
-interface AnimalResolver extends Animal {}
-
 
 export class GraphQLServer {
     public server: any;
@@ -24,25 +20,71 @@ export class GraphQLServer {
   
 
     private schema = `
-    type Animal {
+    interface Animal {
       species: String
-      age: Int
+      age: Float
       weight: Float
       sound: String
     }
-  
+    
+    type Carnivorous implements Animal{
+      species: String
+      age: Float
+      weight: Float
+      sound: String
+      favoriteFood: String
+    }
+    
+    type Herbivorous implements Animal{
+      species: String
+      age: Float
+      weight: Float
+      sound: String
+      favoritePlant: String
+    }
+    
+    type Insect implements Animal{
+      species: String
+      age: Float
+      weight: Float
+      sound: String
+      eatsInsects: Boolean
+      favoriteInsect: String
+    }
+    
     type Query {
-      animals1: [Animal] @deprecated(reason: "Use newField instead.")
+      animalsDeprecated: [Animal] @deprecated(reason: "Use animals instead.")
       animals: [Animal]
       animal(species: String!): Animal
       makeSound(species: String!): String
     }
-  
+    
     type Mutation {
-      addAnimal(species: String!, age: Int!, weight: Float!, sound: String!): Animal
-      setAnimal(species: String!, age: Int, weight: Float, sound: String): Animal
+      addAnimal(
+        species: String!,
+        age: Float!,
+        weight: Float!,
+        sound: String!,
+        favoritePlant: String
+        favoriteFood: String,
+        eatsInsects: Boolean,
+        favoriteInsect: String
+      ): Animal
+    
+      setAnimal(
+        species: String!,
+        age: Float,
+        weight: Float,
+        sound: String,
+        favoritePlant: String,
+        favoriteFood: String,
+        eatsInsects: Boolean,
+        favoriteInsect: String
+      ): Animal
+    
       deleteAnimal(species: String!): Boolean
     }
+    
   `;
 
 
@@ -50,6 +92,7 @@ export class GraphQLServer {
       // Read the GraphQL schema from the file
       const schema = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8');
       const typeDefs = gql`${schema}`;
+      // commented line to use schema from the variable above. 
       //const typeDefs = gql`${this.schema}`;
       const resolvers = this.createResolvers();
   
@@ -60,25 +103,12 @@ export class GraphQLServer {
       this.server.applyMiddleware({ app: this.app });
     }
   
-
     private createResolvers(): any {
 
         const animalDatabase = new AnimalDatabase();
 
-
         return {
           Query: {
-            // __resolveType(animal: any) {
-            //   if (animal instanceof Herbivorous) {
-            //     return 'Herbivorous';
-            //   } else if (animal instanceof Carnivorous) {
-            //     return 'Carnivorous';
-            //   } else if (animal instanceof Insect) {
-            //     return 'Insect';
-            //   }
-            //   return 'Animal';
-            // },
-
             animals: () => {           
               return animalDatabase.getAnimals()},
             animal: (parent: any, args: any) => {             
@@ -141,8 +171,6 @@ export class GraphQLServer {
                 // Animal not found error
                 throw new Error(`Animal with species ${species} not found`);
               }
-
-
             },
             deleteAnimal: (parent: any, args: any) => {
               const speciesToDelete = args.species;
@@ -180,14 +208,12 @@ export class GraphQLServer {
       stopServer(): void {
           this.server.stop();
           exec('npx kill-port 4000');
-          exec('npx kill-port 4001');
       }
   
     // Expose the app for testing
     getTestApp(): express.Express {
         return this.app;
-    }
-    
+    }    
 }
   
 export default GraphQLServer;
