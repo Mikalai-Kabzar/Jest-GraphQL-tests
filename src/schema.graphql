@@ -27,20 +27,7 @@ type Insect implements Animal{
   weight: Float
   sound: String
   eatsInsects: Boolean
-  favoriteFood: String
-}
-
-input HerbivorousInput {
-  favoritePlant: String
-}
-
-input CarnivorousInput {
-  favoriteFood: String
-}
-
-input InsectInput {
-  eatsInsects: Boolean
-  favoriteFood: String
+  favoriteInsect: String
 }
 
 type Query {
@@ -56,9 +43,10 @@ type Mutation {
     age: Float!,
     weight: Float!,
     sound: String!,
-    herbivorous: HerbivorousInput,
+    favoritePlant: String
     favoriteFood: String,
-    insect: InsectInput
+    eatsInsects: Boolean,
+    favoriteInsect: String
   ): Animal
 
   setAnimal(
@@ -66,9 +54,10 @@ type Mutation {
     age: Float,
     weight: Float,
     sound: String,
-    herbivorous: HerbivorousInput,
-    carnivorous: CarnivorousInput,
-    insect: InsectInput
+    favoritePlant: String,
+    favoriteFood: String,
+    eatsInsects: Boolean,
+    favoriteInsect: String
   ): Animal
 
   deleteAnimal(species: String!): Boolean

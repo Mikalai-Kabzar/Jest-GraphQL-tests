@@ -20,8 +20,4 @@ export default class Animal {
   makeSound(): string {
     return `${this.species} makes the sound: ${this.sound}`;
   }
-
-  static __resolveType(animal: Animal): string {
-    throw new Error('This method should be implemented in subclasses');
-  }
 }

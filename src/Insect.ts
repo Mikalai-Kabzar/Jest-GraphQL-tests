@@ -17,9 +17,5 @@ export class Insect extends Animal {
   
     eatsInsects: boolean;
     favoriteInsect: string;
-
-    static __resolveType(animal: Insect): string {
-        return 'Insect';
-      }
   }
   

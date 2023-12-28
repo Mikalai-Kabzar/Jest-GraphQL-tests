@@ -64,35 +64,24 @@ export class GraphQLServer {
     private createResolvers(): any {
 
         const animalDatabase = new AnimalDatabase();
-    
 
 
         return {
           Query: {
-            __resolveType(animal: any) {
-              if (animal instanceof Herbivorous) {
-                return 'Herbivorous';
-              } else if (animal instanceof Carnivorous) {
-                return 'Carnivorous';
-              } else if (animal instanceof Insect) {
-                return 'Insect';
-              }
-              return 'Animal';
-            },
+            // __resolveType(animal: any) {
+            //   if (animal instanceof Herbivorous) {
+            //     return 'Herbivorous';
+            //   } else if (animal instanceof Carnivorous) {
+            //     return 'Carnivorous';
+            //   } else if (animal instanceof Insect) {
+            //     return 'Insect';
+            //   }
+            //   return 'Animal';
+            // },
 
-            animals: () => {
-              // console.log('-------------animals------------')
-              // console.log(animalDatabase.getAnimals())
-              // console.log('-----------------animals------------')
-              
-              
-              
+            animals: () => {           
               return animalDatabase.getAnimals()},
-            animal: (parent: any, args: any) => {
-              // console.log('-------------animals------------')
-              // console.log(animalDatabase.getAnimalBySpecies(args.species))
-              // console.log('-----------------animals------------')
-              
+            animal: (parent: any, args: any) => {             
               return animalDatabase.getAnimalBySpecies(args.species)},
             makeSound: (parent: any, args: any) => {
               const animal = animalDatabase.getAnimalBySpecies(args.species);
@@ -106,7 +95,7 @@ export class GraphQLServer {
               if (args.favoritePlant !== undefined) {
                 const { species, age, weight, sound, favoritePlant } = args;
                 newAnimal = new Herbivorous(species, age, weight, sound, favoritePlant);
-              } else if (args.huntingMethod !== undefined) {
+              } else if (args.favoriteFood !== undefined) {
                 const { species, age, weight, sound, favoriteFood } = args;
                 newAnimal = new Carnivorous(species, age, weight, sound, favoriteFood);
               } else if (args.eatsInsects !== undefined) {
@@ -119,6 +108,41 @@ export class GraphQLServer {
         
               animalDatabase.addAnimal(newAnimal);
               return newAnimal;
+            },
+            setAnimal: (parent: any, args: any) => {
+              const { species, age, weight, sound } = args;
+        
+              // Get the list of all existing animals
+              const existingAnimals = animalDatabase.getAnimals();
+        
+              // Find the index of the animal in the database
+              const animalIndex = existingAnimals.findIndex(animal => animal.species === species);
+        
+              if (animalIndex !== -1) {
+                // Animal found in the database
+                const existingAnimal = existingAnimals[animalIndex];
+                existingAnimal.age = age;
+                existingAnimal.weight = weight;
+                existingAnimal.sound = sound;
+                if (existingAnimal instanceof Herbivorous) {
+                  existingAnimal.favoritePlant = args.favoritePlant;
+                }
+                else if (existingAnimal instanceof Carnivorous) {
+                  existingAnimal.favoriteFood = args.favoriteFood;
+                }
+                else if (existingAnimal instanceof Insect) {
+                  existingAnimal.eatsInsects = args.eatsInsects;
+                  existingAnimal.favoriteInsect = args.favoriteInsect;
+                }
+
+                animalDatabase.setAnimalBySpecies(existingAnimal.species, existingAnimal);
+                return existingAnimal;
+              } else {
+                // Animal not found error
+                throw new Error(`Animal with species ${species} not found`);
+              }
+
+
             },
             deleteAnimal: (parent: any, args: any) => {
               const speciesToDelete = args.species;
@@ -138,22 +162,11 @@ export class GraphQLServer {
                 return 'Herbivorous';
               } else if (animal instanceof Carnivorous) {
                 return 'Carnivorous';
-              } else if (animal instanceof Insect) {
+              } else {
                 return 'Insect';
               }
-              return 'Animal';
             },
           },
-          Herbivorous: {
-            // Add specific resolvers for Herbivorous if needed
-          },
-          Carnivorous: {
-            // Add specific resolvers for Carnivorous if needed
-          },
-          Insect: {
-            // Add specific resolvers for Insect if needed
-          },
-
         };
       }
   
