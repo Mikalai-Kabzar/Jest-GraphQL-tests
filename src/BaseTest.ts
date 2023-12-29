@@ -1,16 +1,9 @@
 import request, { Test} from 'supertest';
-import { Express } from 'express';
 import {GraphQLServer} from './GraphQLServer';
 
 let graphqlServer: GraphQLServer;
 
 class BaseTest {
-  static makeGraphqlRequest: any;  
-
-  constructor() {
-    graphqlServer = new GraphQLServer();
-    const app: Express = graphqlServer.getTestApp();
-  }
 
   startServer(port : number): void {
     graphqlServer = new GraphQLServer();
@@ -23,8 +16,8 @@ class BaseTest {
 
   async makeGraphqlRequest(query: string, variables?: Record<string, any>): Promise<Test> {
     const requestBody = variables ? { query, variables } : { query };
-    return await request(graphqlServer.getTestApp())
-      .post(graphqlServer.server?.graphqlPath || '')
+    return await request(graphqlServer.getApp())
+      .post(graphqlServer.getServer()?.graphqlPath || '')
       .send(requestBody);
   }
 }

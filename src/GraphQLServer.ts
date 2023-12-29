@@ -10,90 +10,19 @@ import { Herbivorous } from './Herbivorous';
 import { Insect } from './Insect';
 
 export class GraphQLServer {
-    public server: any;
+    private server: any;
     private app: express.Express;
-  
+    private port: number = 4000;
+
     constructor() {
       this.app = express();
       this.initializeApolloServer();
     }
-  
-
-    private schema = `
-    interface Animal {
-      species: String
-      age: Float
-      weight: Float
-      sound: String
-    }
-    
-    type Carnivorous implements Animal{
-      species: String
-      age: Float
-      weight: Float
-      sound: String
-      favoriteFood: String
-    }
-    
-    type Herbivorous implements Animal{
-      species: String
-      age: Float
-      weight: Float
-      sound: String
-      favoritePlant: String
-    }
-    
-    type Insect implements Animal{
-      species: String
-      age: Float
-      weight: Float
-      sound: String
-      eatsInsects: Boolean
-      favoriteInsect: String
-    }
-    
-    type Query {
-      animalsDeprecated: [Animal] @deprecated(reason: "Use animals instead.")
-      animals: [Animal]
-      animal(species: String!): Animal
-      makeSound(species: String!): String
-    }
-    
-    type Mutation {
-      addAnimal(
-        species: String!,
-        age: Float!,
-        weight: Float!,
-        sound: String!,
-        favoritePlant: String
-        favoriteFood: String,
-        eatsInsects: Boolean,
-        favoriteInsect: String
-      ): Animal
-    
-      setAnimal(
-        species: String!,
-        age: Float,
-        weight: Float,
-        sound: String,
-        favoritePlant: String,
-        favoriteFood: String,
-        eatsInsects: Boolean,
-        favoriteInsect: String
-      ): Animal
-    
-      deleteAnimal(species: String!): Boolean
-    }
-    
-  `;
-
 
     private async initializeApolloServer(): Promise<void> {
-      // Read the GraphQL schema from the file
       const schema = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8');
       const typeDefs = gql`${schema}`;
-      // commented line to use schema from the variable above. 
-      //const typeDefs = gql`${this.schema}`;
+
       const resolvers = this.createResolvers();
   
       this.server = new ApolloServer({ typeDefs, resolvers });
@@ -198,26 +127,29 @@ export class GraphQLServer {
         };
       }
   
-      startServer(port: number): void {
-        //exec('npx kill-port 4000');
-        this.app.listen(port, () => {
-          console.log(`Server is running at http://localhost:${port}/graphql`);
+      async startServer(port: number): Promise<void> {
+        return new Promise<void>((resolve) => {
+          this.app.listen(port, () => {
+            console.log(`Server is running at http://localhost:${port}/graphql`);
+            resolve();
+          });
         });
       }
     
       stopServer(): void {
           this.server.stop();
-          exec('npx kill-port 4000');
+          exec('npx kill-port '+this.port);
       }
   
     // Expose the app for testing
-    getTestApp(): express.Express {
+    getApp(): express.Express {
         return this.app;
-    }    
+    }  
+
+    getServer(): any {
+      return this.server;
+  }  
 }
   
 export default GraphQLServer;
-
-//const graphqlServer = new GraphQLServer();
-//graphqlServer.startServer(4000);   
   
