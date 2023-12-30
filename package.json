@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "jest --coverage",
-    "start": "npx tsx .\\src\\server.ts start 4001"
+    "start": "npx tsx .\\src\\server\\server.ts start 4001"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

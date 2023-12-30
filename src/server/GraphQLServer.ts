@@ -5,9 +5,9 @@ import AnimalDatabase from './AnimalDatabase';
 import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { Carnivorous } from './Carnivorous';
-import { Herbivorous } from './Herbivorous';
-import { Insect } from './Insect';
+import { Carnivorous } from '../classes/Carnivorous';
+import { Herbivorous } from '../classes/Herbivorous';
+import { Insect } from '../classes/Insect';
 
 export class GraphQLServer {
     private server: any;

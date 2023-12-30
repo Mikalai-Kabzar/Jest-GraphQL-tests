@@ -1,8 +1,8 @@
 // AnimalDatabase.ts
-import Animal from './Animal';
-import { Carnivorous } from './Carnivorous';
-import { Herbivorous } from './Herbivorous';
-import { Insect } from './Insect';
+import Animal from '../classes/Animal';
+import { Carnivorous } from '../classes/Carnivorous';
+import { Herbivorous } from '../classes/Herbivorous';
+import { Insect } from '../classes/Insect';
 
 export default class AnimalDatabase {
     private animals: Animal[] = [
