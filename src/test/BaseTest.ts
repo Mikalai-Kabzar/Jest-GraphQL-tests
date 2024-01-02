@@ -1,11 +1,11 @@
-import request, { Test} from 'supertest';
-import {GraphQLServer} from '../server/GraphQLServer';
+import request, { Test } from 'supertest';
+import { GraphQLServer } from '../server/GraphQLServer';
 
 let graphqlServer: GraphQLServer;
 
 class BaseTest {
 
-  startServer(port : number): void {
+  startServer(port: number): void {
     graphqlServer = new GraphQLServer();
     graphqlServer.startServer(port);
   }

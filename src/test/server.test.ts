@@ -1,14 +1,14 @@
 import BaseTest from './BaseTest';
 const call = BaseTest.prototype.makeGraphqlRequest; // Create an alias
-  const baseTest = new BaseTest();
+const baseTest = new BaseTest();
 
-  beforeAll(() => {
-    baseTest.startServer(4000);
-  });
+beforeAll(() => {
+  baseTest.startServer(4000);
+});
 
-  afterAll(() => {
-    baseTest.stopServer();
-  });
+afterAll(() => {
+  baseTest.stopServer();
+});
 
 
 describe('GraphQL Server Integration Tests', () => {
@@ -31,7 +31,7 @@ describe('GraphQL Server Integration Tests', () => {
     expect(response.status).toBe(200);
 
     const animals = response.body.data.animals;
-    
+
     expect(animals[0].__typename).toBe('Carnivorous')
     expect(animals[0].species).toBe('Lion')
     expect(animals[0].age).toBe(5)
@@ -74,8 +74,8 @@ describe('GraphQL Server Integration Tests', () => {
     let response = await call(query);
     expect(response.status).toBe(200);
 
-    const expectedAnimal = 
-    {          
+    const expectedAnimal =
+    {
       species: 'TigerAdded',
       age: 13,
       weight: 250,
@@ -121,7 +121,7 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Add an animal using the mutation
     const addAnimalResponse = await call(addAnimalMutation);
 
@@ -129,7 +129,7 @@ describe('GraphQL Server Integration Tests', () => {
 
     // Ensure that the animal was added successfully
     const addedAnimal = addAnimalResponse.body.data.addAnimal;
-  
+
     // Now, test the setAnimalBySpecies mutation
     const setAnimalMutation = `
       mutation {
@@ -150,15 +150,15 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Update the animal using the mutation
     const setAnimalResponse = await call(setAnimalMutation);
-  
+
     expect(setAnimalResponse.status).toBe(200);
 
     // Ensure that the animal was updated successfully
     const updatedAnimal = setAnimalResponse.body.data.setAnimal;
-  
+
     // The setAnimalBySpecies mutation should return the updated animal
     expect(updatedAnimal).toEqual({
       species: addedAnimal.species,
@@ -184,22 +184,22 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Add an animal using the mutation
     const addAnimalResponse = await call(addAnimalMutation);
-  
+
     expect(addAnimalResponse.status).toBe(200);
 
     // Ensure that the animal was added successfully
     const addedAnimal = addAnimalResponse.body.data.addAnimal;
-  
+
     // Now, test the deleteAnimal mutation
     const deleteAnimalMutation = `
       mutation {
         deleteAnimal(species: "GiraffeAdded")
       }
     `;
-  
+
     // Delete the animal using the mutation
     const deleteAnimalResponse = await call(deleteAnimalMutation);
 
@@ -207,10 +207,10 @@ describe('GraphQL Server Integration Tests', () => {
 
     // Ensure that the deleteAnimal mutation returns true (success)
     const deleteSuccess = deleteAnimalResponse.body.data.deleteAnimal;
-  
+
     // The deleteAnimalBySpecies mutation should return true for success
     expect(deleteAnimalResponse.body.data.deleteAnimal).toBe(true);
-  
+
     // Now, try to get the deleted animal by species
     const getAnimalQuery = `
       query {
@@ -219,16 +219,16 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Attempt to get the deleted animal (should be null)
     const getAnimalResponse = await call(getAnimalQuery);
-  
+
     expect(getAnimalResponse.status).toBe(200);
 
     // Ensure that the returned animal is null
     const returnedAnimal = getAnimalResponse.body.data.animal;
     expect(returnedAnimal).toBeNull();
-  });  
+  });
 
   it('should return false when trying to delete a non-existing animal', async () => {
     // Attempt to delete a non-existing animal using the deleteAnimal mutation
@@ -237,10 +237,10 @@ describe('GraphQL Server Integration Tests', () => {
         deleteAnimal(species: "NonExistentAnimal")
       }
     `;
-  
+
     // Try to delete the non-existing animal
-    const deleteAnimalResponse  = await call(deleteAnimalMutation);
-  
+    const deleteAnimalResponse = await call(deleteAnimalMutation);
+
     // Ensure that the deleteAnimal mutation returns false for non-existing animal and has a 200 status code
     expect(deleteAnimalResponse.status).toBe(200);
     expect(deleteAnimalResponse.body.data.deleteAnimal).toBe(false);
@@ -267,25 +267,25 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Add an animal using the mutation
     const response = await call(addAnimalMutation);
-  
+
     // Now, test the makeSound query
     const makeSoundQuery = `
       query {
         makeSound(species: "Dog")
       }
     `;
-  
+
     // Get the sound of the added animal using the makeSound query
-    const soundResponse  = await call(makeSoundQuery);
-  
+    const soundResponse = await call(makeSoundQuery);
+
     // Ensure that the returned sound matches the expected value and has a 200 status code
     expect(soundResponse.status).toBe(200);
     expect(soundResponse.body.data.makeSound).toBe('Dog makes the sound: Woof');
   });
-  
+
   it('should return null when trying to make sound for a non-existing animal', async () => {
     // Attempt to make a sound for a non-existing animal using the makeSound query
     const makeSoundQuery = `
@@ -293,18 +293,18 @@ describe('GraphQL Server Integration Tests', () => {
         makeSound(species: "NonExistentAnimal")
       }
     `;
-  
+
     // Try to make a sound for the non-existing animal
     const makeSoundResponse = await call(makeSoundQuery);
-  
+
     // Ensure that the response status is OK (200)
     expect(makeSoundResponse.status).toBe(200);
-  
+
     // Ensure that the makeSound query returns null for non-existing animal
     const returnedSound = makeSoundResponse.body.data.makeSound;
     expect(returnedSound).toBeNull();
   });
-  
+
   it('should retrieve information about multiple animals with aliases', async () => {
     const query = `
       query {
@@ -328,27 +328,27 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     const response = await call(query);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
 
     // Assertions for Lion
     expect(response.body.data.lion.species).toBe('Lion');
-    expect(response.body.data.lion.age).toBe(5);  
-    expect(response.body.data.lion.weight).toBe(200); 
+    expect(response.body.data.lion.age).toBe(5);
+    expect(response.body.data.lion.weight).toBe(200);
     expect(response.body.data.lion.sound).toBe("Roar");
     expect(response.body.data.lion.favoriteFood).toEqual("Meat");
-  
+
     // Assertions for Elephant
     expect(response.body.data.elephant.species).toBe('Elephant');
-    expect(response.body.data.elephant.age).toBe(10);  
-    expect(response.body.data.elephant.weight).toBe(5000); 
+    expect(response.body.data.elephant.age).toBe(10);
+    expect(response.body.data.elephant.weight).toBe(5000);
     expect(response.body.data.elephant.sound).toBe("Trumpet");
     expect(response.body.data.elephant.favoritePlant).toEqual("Vegetables");
   });
-   
+
   it('should retrieve information about all animals with aliases', async () => {
     const query = `
       query {
@@ -382,19 +382,19 @@ describe('GraphQL Server Integration Tests', () => {
         }
         # Add more aliases as needed
       }
-    `;   
+    `;
     const response = await call(query);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
-  
+
     // Assertions for animal1 (Lion)
     expect(response.body.data.animal1.species).toBe('Lion');
     expect(response.body.data.animal1.age).toBe(5);
     expect(response.body.data.animal1.weight).toBe(200);
     expect(response.body.data.animal1.sound).toBe('Roar');
     expect(response.body.data.animal1.favoriteFood).toEqual('Meat');
-  
+
     // Assertions for animal2 (Elephant)
     expect(response.body.data.animal2.species).toBe('Elephant');
     expect(response.body.data.animal2.age).toBe(10);
@@ -410,7 +410,7 @@ describe('GraphQL Server Integration Tests', () => {
     expect(response.body.data.animal3.eatsInsects).toBe(true); // Adjust as needed
     expect(response.body.data.animal3.favoriteInsect).toEqual('Grass'); // Adjust as needed
   });
-  
+
   it('should retrieve information about an animal using GraphQL fragments', async () => {
     // Define a GraphQL fragment
     const animalFragment = `
@@ -421,7 +421,7 @@ describe('GraphQL Server Integration Tests', () => {
         sound
       }
     `;
-  
+
     // Use the fragment in the query
     const query = `
       ${animalFragment}
@@ -431,16 +431,16 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     const response = await call(query);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
     expect(response.body.data.lion.species).toBe('Lion');
     expect(response.body.data.lion.age).toBe(5); // Replace with the actual age value
     expect(response.body.data.lion.weight).toBe(200); // Replace with the actual weight value
     expect(response.body.data.lion.sound).toBe('Roar'); // Replace with the actual sound value
-  }); 
+  });
 
   it('should retrieve information about an animal using variables', async () => {
     // Define a GraphQL query with variables
@@ -454,14 +454,14 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Set the variables
     const variables = {
       species: 'Lion',
     };
-  
+
     const response = await call(query, variables);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
     expect(response.body.data.animal.species).toBe('Lion');
@@ -480,7 +480,7 @@ describe('GraphQL Server Integration Tests', () => {
         sound
       }
     `;
-  
+
     // Define a GraphQL query with variables and the animal fragment
     const query = `
       ${animalFragment}
@@ -504,7 +504,7 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Set the variables for different animal species
     const variables = {
       species1: 'Lion',
@@ -512,10 +512,10 @@ describe('GraphQL Server Integration Tests', () => {
       species3: 'Tiger',
       species4: 'Penguin',
     };
-  
+
     // Make the GraphQL request
     const response = await call(query, variables);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
     // Assertions for animal1 (Lion)
@@ -533,7 +533,7 @@ describe('GraphQL Server Integration Tests', () => {
     // Assertions for animal4 (Penguin)
     expect(response.body.data.animal4.species).toBe('Penguin');
   });
-  
+
   it('should conditionally include or skip animal information based on directives', async () => {
     // Create the first species (Carnivorous - Lion)
     const createFirstSpeciesMutation = `
@@ -555,9 +555,9 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     await call(createFirstSpeciesMutation);
-  
+
     // Create the second species (Herbivorous - Giraffe)
     const createSecondSpeciesMutation = `
       mutation {
@@ -578,9 +578,9 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     await call(createSecondSpeciesMutation);
-  
+
     // Define a GraphQL query with variables and directives
     const query = `
       query {
@@ -604,27 +604,27 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Make the GraphQL request
     const response = await call(query);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
-  
+
     // Assertions for Lion (Carnivorous)
     expect(response.body.data.lion.species).toBe('LionAdded');
     expect(response.body.data.lion.age).toBe(5);
     expect(response.body.data.lion.weight).toBe(200);
     expect(response.body.data.lion.sound).toBe('Roar');
     expect(response.body.data.lion.favoriteFood).toEqual('Gazelle');
-  
+
     // Assertions for Giraffe (Herbivorous)
     expect(response.body.data.giraffe.species).toBe('GiraffeAdded');
     expect(response.body.data.giraffe.age).toBeUndefined(); // Age should be skipped
     expect(response.body.data.giraffe.weight).toBeUndefined(); // Weight should be skipped
     expect(response.body.data.giraffe.sound).toBe('Hum');
     expect(response.body.data.giraffe.favoritePlant).toEqual('Acacia leaves');
-  }); 
+  });
 
   it('should retrieve information about an animal using default variable value', async () => {
     const query = `
@@ -637,9 +637,9 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     const response = await call(query);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
     expect(response.body.data.animal.species).toBe('Elephant');
@@ -647,7 +647,7 @@ describe('GraphQL Server Integration Tests', () => {
     expect(response.body.data.animal.weight).toBe(5000); // Adjust as needed
     expect(response.body.data.animal.sound).toBe('Trumpet'); // Adjust as needed
   });
-  
+
   it('should retrieve information about a specific animal', async () => {
     const query = `
       query GetAnimals($species: String = "Grasshopper") {
@@ -659,13 +659,13 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     const variables = {
       species: 'Grasshopper',
     };
-  
+
     const response = await call(query, variables);
-  
+
     // Assertions for the response
     expect(response.status).toBe(200);
     expect(response.body.data.animal.species).toBe('Grasshopper');
@@ -697,9 +697,9 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     const addInsectResponse = await call(addInsectMutation);
-  
+
     // Assertions for adding the Insect
     expect(addInsectResponse.status).toBe(200);
     expect(addInsectResponse.body).toHaveProperty('data.addAnimal.species', 'DragonflyAdded');
@@ -708,7 +708,7 @@ describe('GraphQL Server Integration Tests', () => {
     expect(addInsectResponse.body).toHaveProperty('data.addAnimal.sound', 'Buzz');
     expect(addInsectResponse.body).toHaveProperty('data.addAnimal.eatsInsects', true);
     expect(addInsectResponse.body).toHaveProperty('data.addAnimal.favoriteInsect', 'Mosquito');
-  
+
     // Query for the added Insect
     const queryAddedInsect = `
       query {
@@ -724,9 +724,9 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     const queryAddedInsectResponse = await call(queryAddedInsect);
-  
+
     // Assertions for querying the added Insect
     expect(queryAddedInsectResponse.status).toBe(200);
     expect(queryAddedInsectResponse.body).toHaveProperty('data.animal.species', 'DragonflyAdded');
@@ -736,7 +736,7 @@ describe('GraphQL Server Integration Tests', () => {
     expect(queryAddedInsectResponse.body).toHaveProperty('data.animal.eatsInsects', true);
     expect(queryAddedInsectResponse.body).toHaveProperty('data.animal.favoriteInsect', 'Mosquito');
   });
-  
+
   it('should throw an error for invalid animal type', async () => {
     // Attempt to add an animal with an invalid type
     const addInvalidAnimalMutation = `
@@ -754,15 +754,15 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     const addInvalidAnimalResponse = await call(addInvalidAnimalMutation);
-  
+
     // Assertions for the response with an invalid animal type
     expect(addInvalidAnimalResponse.status).toBe(200);
     expect(addInvalidAnimalResponse.body).toHaveProperty('errors');
     expect(addInvalidAnimalResponse.body.errors[0]).toHaveProperty('message', 'Invalid animal type');
   });
-  
+
   it('should update favorite plant for existing Herbivorous animal', async () => {
     // Assuming you have a mutation to add an herbivorous animal
     const addHerbivorousAnimalMutation = `
@@ -784,15 +784,15 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Add an herbivorous animal using the mutation
     const addHerbivorousAnimalResponse = await call(addHerbivorousAnimalMutation);
-    
+
     expect(addHerbivorousAnimalResponse.status).toBe(200);
 
     // Ensure that the herbivorous animal was added successfully
     const addedHerbivorousAnimal = addHerbivorousAnimalResponse.body.data.addAnimal;
-  
+
     // Now, test the setAnimal mutation for updating favorite plant
     const setFavoritePlantMutation = `
       mutation {
@@ -813,15 +813,15 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Update the favorite plant of the existing herbivorous animal
     const setFavoritePlantResponse = await call(setFavoritePlantMutation);
-  
+
     expect(setFavoritePlantResponse.status).toBe(200);
 
     // Ensure that the favorite plant was updated successfully
     const updatedHerbivorousAnimal = setFavoritePlantResponse.body.data.setAnimal;
-  
+
     // The setAnimal mutation should return the updated herbivorous animal
     expect(updatedHerbivorousAnimal).toEqual({
       species: addedHerbivorousAnimal.species,
@@ -831,7 +831,7 @@ describe('GraphQL Server Integration Tests', () => {
       favoritePlant: "Bananas", // Updated favorite plant for Herbivorous
     });
   });
-  
+
   it('should update favorite insect for existing Insect animal', async () => {
     // Assuming you have a mutation to add an insect animal
     const addInsectAnimalMutation = `
@@ -855,15 +855,15 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Add an insect animal using the mutation
     const addInsectAnimalResponse = await call(addInsectAnimalMutation);
-    
+
     expect(addInsectAnimalResponse.status).toBe(200);
-  
+
     // Ensure that the insect animal was added successfully
     const addedInsectAnimal = addInsectAnimalResponse.body.data.addAnimal;
-  
+
     // Now, test the setAnimal mutation for updating favorite insect
     const setFavoriteInsectMutation = `
       mutation {
@@ -886,15 +886,15 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Update the favorite insect of the existing insect animal
     const setFavoriteInsectResponse = await call(setFavoriteInsectMutation);
-  
+
     expect(setFavoriteInsectResponse.status).toBe(200);
-  
+
     // Ensure that the favorite insect was updated successfully
     const updatedInsectAnimal = setFavoriteInsectResponse.body.data.setAnimal;
-  
+
     // The setAnimal mutation should return the updated insect animal
     expect(updatedInsectAnimal).toEqual({
       species: addedInsectAnimal.species,
@@ -905,7 +905,7 @@ describe('GraphQL Server Integration Tests', () => {
       favoriteInsect: "Butterfly", // Updated favorite insect for Insect
     });
   });
-  
+
   it('should throw an error when trying to update a non-existing animal', async () => {
     // Assuming you have a mutation to update an animal
     const setAnimalMutation = `
@@ -923,17 +923,17 @@ describe('GraphQL Server Integration Tests', () => {
         }
       }
     `;
-  
+
     // Try to update a non-existing animal using the setAnimal mutation
     const setAnimalResponse = await call(setAnimalMutation);
-  
+
     // Ensure that the setAnimal mutation throws an error for non-existing animal
     expect(setAnimalResponse.status).toBe(200);
     expect(setAnimalResponse.body).toHaveProperty('errors');
     expect(setAnimalResponse.body.errors[0].message).toBe('Animal with species NonExistentAnimal not found');
   });
-  
-  
+
+
 
 });
 

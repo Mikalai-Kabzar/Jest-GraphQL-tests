@@ -1,4 +1,3 @@
-// server.ts
 import readline from 'readline';
 import GraphQLServer from './GraphQLServer';
 
@@ -12,9 +11,9 @@ async function run() {
   }
 
   readline.createInterface({
-    input: process.stdin, 
-    output: process.stdout,})
-  .question('Press Enter to exit...', () => {
+    input: process.stdin,
+    output: process.stdout,
+  }).question('Press Enter to exit...', () => {
     console.log('Stopping server...');
     graphqlServer.stopServer();
     process.exit(0);

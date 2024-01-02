@@ -3,15 +3,15 @@ import Animal from "./Animal";
 
 export class Carnivorous extends Animal {
   favoriteFood: string;
-  
-    constructor(
-      species: string,
-      age: number,
-      weight: number,
-      sound: string,
-      favoriteFood: string,
-    ) {
-      super(species, age, weight, sound);
-      this.favoriteFood = favoriteFood;
-    }
+
+  constructor(
+    species: string,
+    age: number,
+    weight: number,
+    sound: string,
+    favoriteFood: string,
+  ) {
+    super(species, age, weight, sound);
+    this.favoriteFood = favoriteFood;
   }
+}
